@@ -10,9 +10,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
- 
-//#include "LCD_TWI.h"
-//#include "twi.h"
+
 //#include "SoftUART.h"
 #include "UART_STDIO.h"
 

@@ -1,7 +1,7 @@
 #include "UART_STDIO.h"
 
 static FILE mystdout = FDEV_SETUP_STREAM(uart_putchar, NULL, _FDEV_SETUP_WRITE);
-unsigned int i = 0;
+char myadd = 0x68;
  void USARTinit(void)
  {	 
 	 UBRRL=51; //103-9600 51-19.2
@@ -53,15 +53,32 @@ ISR(USART_RXC_vect)
         if (bf == '*' || IDX >= LEN)
         {
 				//buffer[IDX-1]='\0';
-				PORTD |= (1<<(PORTD2)); // Передача
-				_delay_ms(1);
-				printf("%d,CO,1.234,0,1*",i);
-				_delay_ms(1);
-				PORTD &= ~(1<<(PORTD2));	// Прием
+				
+				if (buffer[0] == myadd)
+				{
+					PORTD |= (1<<(PORTD2)); // Передача
+					_delay_ms(1);
+					switch (buffer[1])
+					{
+					case 0x10:	printf("CO,1.234,0,1,0*");
+						break;
+					case 0x11:	printf("comand 0x11 ok*");
+						break;
+					case 0x12:	printf("comand 0x12 ok*");
+						break;
+					default:	printf("comand not found*");
+						break;	
+					}
+					
+					_delay_ms(1);
+					PORTD &= ~(1<<(PORTD2));	// Прием
+				}
+				
 				//_delay_ms(10);
                 IDX=0;
+				
                 done=1;
-				i++;
+				//i++;
 				//printf("%s",buffer);
 				
         }
