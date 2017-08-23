@@ -1,7 +1,11 @@
 #include "UART_STDIO.h"
 
 static FILE mystdout = FDEV_SETUP_STREAM(uart_putchar, NULL, _FDEV_SETUP_WRITE);
-char myadd = 0x68;
+uint8_t myadd = 0xFD;
+//uint8_t add = 0xeF;
+uint8_t cmd[10] = {0x10,0x11,0x12,0x13,0x14,0x15,0x16,0x17,0x18};
+
+//#define SLAVE_ID_1	65530UL	// ID первого слейва
  void USARTinit(void)
  {	 
 	 UBRRL=51; //103-9600 51-19.2
@@ -46,6 +50,7 @@ void writeSerial(char* str)
 */
 ISR(USART_RXC_vect)
 {
+		//PORTD &= ~(1<<(PORTD2));	// Прием
         char bf= UDR;
         buffer[IDX]=bf;
         IDX++;
@@ -60,9 +65,9 @@ ISR(USART_RXC_vect)
 					_delay_ms(1);
 					switch (buffer[1])
 					{
-					case 0x10:	printf("CO,1.234,0,1,0*");
+					case 0x10:	printf("%c%cNH3,4.328,0,0,0*",myadd,buffer[1]);
 						break;
-					case 0x11:	printf("comand 0x11 ok*");
+					case 0x11:	printf("%c%c*",myadd,buffer[1]); 
 						break;
 					case 0x12:	printf("comand 0x12 ok*");
 						break;
